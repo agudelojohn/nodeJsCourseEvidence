@@ -1,26 +1,37 @@
 const fs = require("fs");
-const data = JSON.parse(
+const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/../data/tours-simple.json`)
 );
+
+const notDefined = (res) => {
+  return res.status(500).json({
+    status: "Error",
+    message: "Route not yet defined",
+  });
+};
+
+exports.checkId = (req, res, next, val) => {
+  console.log("Middleware CheckID");
+  const id = req.params.id * 1;
+  if (id > tours.length) {
+    return res.status(404).json({
+      status: "Fail",
+      message: "Invalid ID",
+    });
+  }
+  next();
+};
+
 exports.getAllTours = (req, res) => {
   res.status(200).json({
     status: "success",
     results: data.length,
-    data: { tours: data },
+    data: { tours },
   });
 };
 
 exports.getOneTour = (req, res) => {
-  const id = req.params.id * 1;
-  const tour = data.find((el) => el.id === id);
-
-  if (!tour) {
-    return res.status(404).json({
-      status: "fail",
-      message: "Invalid ID",
-    });
-  }
-
+  const tour = tours.find((elem) => elem.id === req.params.id);
   res.status(200).json({
     status: "success",
     data: {
@@ -30,13 +41,13 @@ exports.getOneTour = (req, res) => {
 };
 
 exports.createTour = (req, res) => {
-  return null;
+  return notDefined(res);
 };
 
 exports.updateTour = (req, res) => {
-  return null;
+  return notDefined(res);
 };
 
 exports.deleteTour = (req, res) => {
-  return null;
+  return notDefined(res);
 };
