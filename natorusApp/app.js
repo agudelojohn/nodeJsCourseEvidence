@@ -1,20 +1,21 @@
 const express = require("express");
-const fs = require("fs");
-
+const tourRouter = require("./routes/tourRoutes");
+const userRouter = require("./routes/userRoutes");
 const app = express();
-const appVersion = "v1";
 
-const data = JSON.parse(fs.readFileSync(`${__dirname}/data/tours-simple.json`));
-
-app.get(`/api/${appVersion}/tours`, async (req, res) => {
-  res.status(200).json({
-    status: "success",
-    results: data.length,
-    data: { tours: data },
-  });
+//Middlewares here will apply to all routes
+app.use(express.json());
+app.use((req, res, next) => {
+  req.date;
+  console.log("Hello from middleware");
+  next();
 });
 
-const port = 3000;
-app.listen(port, () => {
-  console.log("Running on port 3000");
-});
+const APPVERSION = "v1";
+
+//Routes
+//This are also middlewares but applied just to the resource/URL that I'm espicifying
+app.use(`/api/${APPVERSION}/tours`, tourRouter);
+app.use(`/api/${APPVERSION}/users`, userRouter);
+
+module.exports = app;
