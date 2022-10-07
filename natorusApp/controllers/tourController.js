@@ -22,15 +22,16 @@ const notDefined = (res) =>
 // };
 
 //Middleware to check the body shape
-exports.checkBody = (req, res, next) => {
-  if (!req.body.name || !req.body.price || !req.body.duration) {
-    return res.status(400).json({
-      status: 'Error',
-      message: 'Bad request body, it is not matching requirements',
-    });
-  }
-  next();
-};
+// Not need anymore regarding to model validations
+// exports.checkBody = (req, res, next) => {
+//   if (!req.body.name || !req.body.price || !req.body.duration) {
+//     return res.status(400).json({
+//       status: 'Error',
+//       message: 'Bad request body, it is not matching requirements',
+//     });
+//   }
+//   next();
+// };
 
 exports.getAllTours = (req, res) => {
   res.status(200).json({
@@ -50,13 +51,21 @@ exports.getOneTour = (req, res) => {
   // });
 };
 
-exports.createTour = (req, res) => {
-  res.status(201).json({
-    status: 'Sucess',
-    data: {
-      tour: req.body,
-    },
-  });
+exports.createTour = async (req, res) => {
+  try {
+    const newTour = await Tour.create(req.body);
+    res.status(201).json({
+      status: 'success',
+      data: {
+        tour: newTour,
+      },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'fail',
+      message: err,
+    });
+  }
 };
 
 exports.updateTour = (req, res) => notDefined(res);
