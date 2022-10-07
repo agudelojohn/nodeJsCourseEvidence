@@ -1,22 +1,32 @@
-const fs = require("fs");
-const tours = JSON.parse(
-  fs.readFileSync(`${__dirname}/../data/tours-simple.json`)
-);
+// const fs = require('fs');
+const Tour = require('./../models/tourModel');
 
-const notDefined = (res) => {
-  return res.status(500).json({
-    status: "Error",
-    message: "Route not yet defined",
+// const tours = JSON.parse(fs.readFileSync(`${__dirname}/../data/tours-simple.json`));
+
+const notDefined = (res) =>
+  res.status(500).json({
+    status: 'Error',
+    message: 'Route not yet defined',
   });
-};
 
-exports.checkId = (req, res, next, val) => {
-  console.log("Middleware CheckID");
-  const id = req.params.id * 1;
-  if (id > tours.length) {
-    return res.status(404).json({
-      status: "Fail",
-      message: "Invalid ID",
+// exports.checkId = (req, res, next, val) => {
+//   console.log('Middleware CheckID');
+//   const id = req.params.id * 1;
+//   if (id > tours.length) {
+//     return res.status(404).json({
+//       status: 'Fail',
+//       message: 'Invalid ID',
+//     });
+//   }
+//   next();
+// };
+
+//Middleware to check the body shape
+exports.checkBody = (req, res, next) => {
+  if (!req.body.name || !req.body.price || !req.body.duration) {
+    return res.status(400).json({
+      status: 'Error',
+      message: 'Bad request body, it is not matching requirements',
     });
   }
   next();
@@ -24,30 +34,31 @@ exports.checkId = (req, res, next, val) => {
 
 exports.getAllTours = (req, res) => {
   res.status(200).json({
-    status: "success",
+    status: 'success',
     results: data.length,
-    data: { tours },
+    // data: { tours },
   });
 };
 
 exports.getOneTour = (req, res) => {
-  const tour = tours.find((elem) => elem.id === req.params.id);
-  res.status(200).json({
-    status: "success",
+  // const tour = tours.find((elem) => elem.id === req.params.id);
+  // res.status(200).json({
+  //   status: 'success',
+  //   data: {
+  //     tour,
+  //   },
+  // });
+};
+
+exports.createTour = (req, res) => {
+  res.status(201).json({
+    status: 'Sucess',
     data: {
-      tour,
+      tour: req.body,
     },
   });
 };
 
-exports.createTour = (req, res) => {
-  return notDefined(res);
-};
+exports.updateTour = (req, res) => notDefined(res);
 
-exports.updateTour = (req, res) => {
-  return notDefined(res);
-};
-
-exports.deleteTour = (req, res) => {
-  return notDefined(res);
-};
+exports.deleteTour = (req, res) => notDefined(res);
