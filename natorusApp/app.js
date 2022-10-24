@@ -9,11 +9,12 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 app.use(express.json());
-app.use((req, res, next) => {
-  req.date;
-  console.log('Hello from middleware');
-  next();
-});
+
+// app.use((req, res, next) => {
+//   req.date;
+//   console.log('Hello from middleware');
+//   next();
+// });
 
 const APPVERSION = 'v1';
 
@@ -21,5 +22,12 @@ const APPVERSION = 'v1';
 //This are also middlewares but applied just to the resource/URL that I'm espicifying
 app.use(`/api/${APPVERSION}/tours`, tourRouter);
 app.use(`/api/${APPVERSION}/users`, userRouter);
+//The following middleware will onlybe reach after not matching the previous ones
+app.all('*', (req, res, next) => {
+  res.status(404).json({
+    status: 'fail',
+    message: `Cant find ${req.originalUrl}`,
+  });
+});
 
 module.exports = app;
